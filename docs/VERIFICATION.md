@@ -17,7 +17,7 @@ The test suite uses real Better Auth handlers, Prisma/SQLite transactions, appli
 
 The public-release documentation and brand pass then changed only documentation, package metadata, comments, and visible product naming. Its focused checks found valid local links across 13 Markdown files, no retired planning terminology in the current tree, a passing TypeScript check, 8/8 passing authentication/foundation tests, and a fresh production build after the rename. The unchanged business logic continues to use the 99-test evidence above.
 
-The repository includes a GitHub Actions workflow for formatting, types, tests, the offline journey smoke, and the production build. It has been reviewed and formatted locally; its first hosted run remains pending until the repository is pushed to GitHub.
+The repository includes a GitHub Actions workflow for formatting, types, tests, the offline journey smoke, and the production build. It has been reviewed and formatted locally; the first hosted run must be confirmed in GitHub Actions after the initial push.
 
 ## Reproducibility evidence
 
