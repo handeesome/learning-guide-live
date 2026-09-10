@@ -2,6 +2,12 @@
 
 Learning Guide Live was developed with substantial assistance from OpenAI Codex. Assistance included implementation drafts, test generation, repository inspection, API research, browser automation, and documentation review.
 
+## Tools and models
+
+- Development assistant: OpenAI Codex
+- Development model: GPT-5
+- Product summary provider: DeepSeek API, with the model selected by the server-only `DEEPSEEK_MODEL` setting (default `deepseek-v4-flash`)
+
 AI output was not treated as verification by itself. Observable behavior was checked through isolated SQLite integration tests, permission and concurrency tests, production builds, local HTTP smoke tests, controlled LiveKit Cloud flows, and one bounded DeepSeek request. Known device and screen-capture evidence gaps remain documented in `VERIFICATION.md`.
 
 ## Product AI feature

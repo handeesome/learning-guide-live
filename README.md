@@ -63,6 +63,21 @@ Open [http://localhost:3000](http://localhost:3000). Use that exact origin becau
 
 All demo accounts use `LearnTogether!2026`. They are synthetic local-development identities; do not reuse this password or seed these accounts in a public environment.
 
+## Two-browser demo
+
+Use two independent browser profiles (or one normal window and one private window) at `http://localhost:3000`:
+
+1. Sign in as Alex in browser A and Morgan in browser B.
+2. As Alex, create a themed room and a 15-minute invitation.
+3. Open the invitation in browser B, submit Morgan's join request, then approve it in browser A.
+4. Promote Morgan to Moderator and join the LiveKit room from both browsers.
+5. Exchange chat messages, raise and lower a hand, and set and clear the focused speaker.
+6. Share a safe blank/test window, confirm that screen share takes the main stage, then stop sharing.
+7. Demonstrate a Moderator kick, then have Alex end the room.
+8. Generate the chat-based discussion summary and refresh to confirm that it persists.
+
+For the full narration, expected state transitions, safety notes, and deterministic alternatives for the ninth-seat and invitation-expiry cases, see the [product walkthrough](docs/WALKTHROUGH.md).
+
 ### Environment
 
 Copy values from [.env.example](.env.example) into the ignored local `.env`:
