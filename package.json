@@ -1,0 +1,57 @@
+{
+  "name": "learning-guide-live",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "next dev --hostname localhost --port 3000",
+    "build": "prisma generate && next build",
+    "start": "next start --hostname localhost --port 3000",
+    "typecheck": "next typegen && tsc --noEmit",
+    "setup": "node scripts/setup-local.mjs && prisma generate && prisma migrate deploy && tsx prisma/seed.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "format": "prettier --write --ignore-unknown .",
+    "format:check": "prettier --check --ignore-unknown .",
+    "test": "node --import tsx --test --test-concurrency=1 tests/*.test.ts",
+    "smoke:foundation": "node scripts/smoke-foundation.mjs",
+    "smoke:entry": "node scripts/smoke-entry-routes.mjs",
+    "smoke:review": "node scripts/smoke-review.mjs",
+    "smoke:seats": "node scripts/smoke-seats.mjs",
+    "smoke:token": "node scripts/smoke-token.mjs",
+    "smoke:livekit": "tsx scripts/smoke-livekit.ts",
+    "smoke:delivery": "tsx scripts/smoke-delivery.ts"
+  },
+  "dependencies": {
+    "@livekit/components-react": "2.9.24",
+    "@prisma/adapter-better-sqlite3": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "better-auth": "^1.4.0",
+    "dotenv": "^17.2.0",
+    "livekit-client": "2.22.3",
+    "livekit-server-sdk": "2.19.0",
+    "next": "^16.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "prettier": "3.9.6",
+    "prisma": "^7.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "allowScripts": {
+    "@prisma/engines@7.10.0": true,
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.28.2": true,
+    "prisma@7.10.0": true
+  }
+}

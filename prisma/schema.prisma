@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String        @id
+  name          String
+  email         String        @unique
+  emailVerified Boolean       @default(false)
+  image         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  hostedRooms   Room[]
+  memberships   RoomMember[]
+  joinRequests  JoinRequest[]
+  messages      ChatMessage[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verifications")
+}
+
+enum Topic {
+  PHILOSOPHY
+  MATHEMATICAL_BIOLOGY
+  GERMAN_HISTORY
+}
+
+enum RoomStatus {
+  OPEN
+  ENDING
+  ENDED
+}
+
+enum MemberRole {
+  HOST
+  MODERATOR
+  PARTICIPANT
+}
+
+enum MemberStatus {
+  APPROVED
+  ACTIVE
+  LEFT
+  KICKED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SummaryStatus {
+  PENDING
+  GENERATING
+  READY
+  FAILED
+}
+
+model Room {
+  id            String          @id @default(cuid())
+  title         String
+  description   String
+  topic         Topic
+  status        RoomStatus      @default(OPEN)
+  hostId        String
+  host          User            @relation(fields: [hostId], references: [id], onDelete: Restrict)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  endedAt       DateTime?
+  focusedUserId String?
+  members       RoomMember[]
+  joinRequests  JoinRequest[]
+  messages      ChatMessage[]
+  invitations   Invitation[]
+  summary       SessionSummary?
+
+  @@index([status, createdAt])
+  @@index([hostId])
+  @@map("rooms")
+}
+
+model RoomMember {
+  id                  String       @id @default(cuid())
+  roomId              String
+  userId              String
+  role                MemberRole   @default(PARTICIPANT)
+  status              MemberStatus @default(APPROVED)
+  handRaised          Boolean      @default(false)
+  seatExpiresAt       DateTime?
+  seatOwnerId         String?
+  seatReservationId   String?
+  mediaIdentity       String?
+  mediaTokenExpiresAt DateTime?
+  mediaRevoking       Boolean      @default(false)
+  mediaAbsentSince    DateTime?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  room                Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user                User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([roomId, userId])
+  @@index([roomId, status, seatExpiresAt])
+  @@index([userId])
+  @@map("room_members")
+}
+
+model JoinRequest {
+  id        String        @id @default(cuid())
+  roomId    String
+  userId    String
+  status    RequestStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  room      Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([roomId, userId])
+  @@index([roomId, status])
+  @@map("join_requests")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  body      String
+  createdAt DateTime @default(now())
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([roomId, createdAt, id])
+  @@index([userId])
+  @@map("chat_messages")
+}
+
+model Invitation {
+  id        String   @id @default(cuid())
+  codeHash  String   @unique
+  roomId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@map("invitations")
+}
+
+model SessionSummary {
+  id                 String        @id @default(cuid())
+  roomId             String        @unique
+  status             SummaryStatus @default(PENDING)
+  content            String?
+  model              String?
+  error              String?
+  requestedAt        DateTime?
+  attemptId          String?
+  promptTokens       Int?
+  completionTokens   Int?
+  sourceMessageCount Int?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  room               Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@map("session_summaries")
+}
